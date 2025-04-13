@@ -5,6 +5,46 @@ console.log('Running Netlify post-build script...');
 const fs = require('fs');
 const path = require('path');
 
+// Function to ensure the correct title and description in HTML files
+function fixTitleAndDescription(filePath) {
+  if (fs.existsSync(filePath)) {
+    console.log(`Fixing title and description in ${filePath}...`);
+    let html = fs.readFileSync(filePath, 'utf8');
+
+    // Fix title
+    html = html.replace(/<title>[^<]*<\/title>/g, '<title>Fitkraft Studio</title>');
+    html = html.replace(/fitkraft-landing-wizard/g, 'Fitkraft Studio');
+    html = html.replace(/FitKraft Studio - Transform Your Fitness Journey/g, 'Fitkraft Studio');
+    html = html.replace(/fitkraft - personal training/g, 'Fitkraft Studio');
+
+    // Fix description
+    html = html.replace(/<meta name="description" content="[^"]*"/g, '<meta name="description" content="FITKRAFT Personal Fitness Studio"');
+
+    // Add a script to force the title and description
+    const titleScript = `
+<script>
+  // Force correct title and description
+  document.addEventListener('DOMContentLoaded', function() {
+    document.title = 'Fitkraft Studio';
+
+    // Find and update meta description
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'FITKRAFT Personal Fitness Studio');
+    }
+  });
+</script>
+`;
+
+    // Add the script right before the closing head tag if it doesn't already exist
+    if (!html.includes('Force correct title and description')) {
+      html = html.replace('</head>', titleScript + '</head>');
+    }
+
+    fs.writeFileSync(filePath, html);
+  }
+}
+
 // Get the build timestamp
 const buildTimestamp = new Date().toISOString();
 console.log(`Post-build script running at: ${buildTimestamp}`);
@@ -102,5 +142,25 @@ function removeFilesWithLovable(dir) {
 }
 
 removeFilesWithLovable(publishDir);
+
+// Fix title and description in all HTML files
+console.log('Fixing title and description in all HTML files...');
+
+// Fix the main index.html file
+fixTitleAndDescription(path.join(publishDir, 'index.html'));
+
+// Fix the build-verification.html file
+fixTitleAndDescription(path.join(publishDir, 'build-verification.html'));
+
+// Create a copy of index.html as 200.html (used by Netlify for SPA routing)
+const indexHtmlPath = path.join(publishDir, 'index.html');
+if (fs.existsSync(indexHtmlPath)) {
+  console.log('Creating 200.html file...');
+  fs.copyFileSync(indexHtmlPath, path.join(publishDir, '200.html'));
+}
+
+// Create a copy of index.html as 404.html
+console.log('Creating 404.html file...');
+fs.copyFileSync(indexHtmlPath, path.join(publishDir, '404.html'));
 
 console.log('Post-build script completed successfully!');
