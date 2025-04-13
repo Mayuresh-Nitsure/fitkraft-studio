@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Test Insert</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #fffbeb;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #333;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #eab308;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #ca8a04;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .debug {
+            background-color: #fef3c7;
+            border: 1px solid #eab308;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .success {
+            background-color: #dcfce7;
+            border: 1px solid #22c55e;
+            color: #166534;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .error {
+            background-color: #fee2e2;
+            border: 1px solid #ef4444;
+            color: #b91c1c;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Supabase Test Insert</h1>
+        
+        <div class="card">
+            <h2>Insert Test Data</h2>
+            <p>This page will insert a test record into your Supabase database.</p>
+            
+            <div class="debug" id="debug-info">
+                <h3>Debug Information:</h3>
+                <p>Fill out the form and click "Insert Test Data" to add a record to your Supabase database.</p>
+                <p><strong>Table name:</strong> contact_submissions</p>
+            </div>
+            
+            <div id="success-container" style="display: none;" class="success">
+                <h3>Success!</h3>
+                <p id="success-message"></p>
+            </div>
+            
+            <div id="error-container" style="display: none;" class="error">
+                <h3>Error:</h3>
+                <p id="error-message"></p>
+            </div>
+            
+            <form id="test-form">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" value="Test User" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" value="test@example.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone:</label>
+                    <input type="text" id="phone" value="1234567890">
+                </div>
+                
+                <div class="form-group">
+                    <label for="interests">Interests:</label>
+                    <input type="text" id="interests" value="Batch Training, Personal Training">
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">Message:</label>
+                    <textarea id="message" rows="4">This is a test message.</textarea>
+                </div>
+                
+                <button type="submit" id="insert-button">Insert Test Data</button>
+                <button type="button" id="view-data-button">View Existing Data</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Supabase connection details
+        const SUPABASE_URL = 'https://xqmujsdspymsacjzhoyh.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhxbXVqc2RzcHltc2Fjanpob3loIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQzNTQ5NDUsImV4cCI6MjA1OTkzMDk0NX0.IspVcIDlUu5UDw1AnYhA5rV1erdQYBUa-irAO4wvtMM';
+        
+        // DOM elements
+        const debugInfo = document.getElementById('debug-info');
+        const successContainer = document.getElementById('success-container');
+        const successMessage = document.getElementById('success-message');
+        const errorContainer = document.getElementById('error-container');
+        const errorMessage = document.getElementById('error-message');
+        const testForm = document.getElementById('test-form');
+        
+        // Show success message
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successContainer.style.display = 'block';
+            errorContainer.style.display = 'none';
+        }
+        
+        // Show error message
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorContainer.style.display = 'block';
+            successContainer.style.display = 'none';
+        }
+        
+        // Insert test data
+        testForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const interests = document.getElementById('interests').value;
+            const message = document.getElementById('message').value;
+            
+            try {
+                console.log('Inserting test data...');
+                debugInfo.innerHTML += '<p>Inserting test data...</p>';
+                
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/contact_submissions`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify({
+                        name,
+                        email,
+                        phone,
+                        interests,
+                        message
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`HTTP error! Status: ${response.status}, Message: ${JSON.stringify(errorData)}`);
+                }
+                
+                const data = await response.json();
+                console.log('Insert response:', data);
+                debugInfo.innerHTML += `<p>Insert successful! Response: ${JSON.stringify(data)}</p>`;
+                
+                showSuccess('Test data inserted successfully! Check your Supabase database.');
+                
+            } catch (error) {
+                console.error('Error inserting test data:', error);
+                debugInfo.innerHTML += `<p>Error inserting test data: ${error.message}</p>`;
+                showError(`Error inserting test data: ${error.message}`);
+            }
+        });
+        
+        // View existing data
+        document.getElementById('view-data-button').addEventListener('click', () => {
+            window.location.href = '/admin-test.html';
+        });
+    </script>
+</body>
+</html>

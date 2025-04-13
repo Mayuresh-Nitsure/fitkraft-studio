@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #fffbeb;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #333;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #eab308;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #ca8a04;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #fef3c7;
+        }
+        tr:hover {
+            background-color: #fef9c3;
+        }
+        .debug {
+            background-color: #fef3c7;
+            border: 1px solid #eab308;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .error {
+            background-color: #fee2e2;
+            border: 1px solid #ef4444;
+            color: #b91c1c;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #eab308;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Test Page</h1>
+        
+        <div class="card">
+            <h2>Supabase Connection Test</h2>
+            <p>This page tests the connection to your Supabase database and displays the results.</p>
+            
+            <div class="debug" id="debug-info">
+                <h3>Debug Information:</h3>
+                <p>Click the buttons below to test different connection methods.</p>
+            </div>
+            
+            <div id="error-container" style="display: none;" class="error">
+                <h3>Error:</h3>
+                <p id="error-message"></p>
+            </div>
+            
+            <div>
+                <button id="test-fetch">Test Direct Fetch</button>
+                <button id="test-fetch-auth">Test Fetch with Auth</button>
+                <button id="clear-results">Clear Results</button>
+            </div>
+            
+            <div id="loading" class="loading" style="display: none;">
+                <div class="spinner"></div>
+            </div>
+            
+            <div id="results-container" style="display: none;">
+                <h3>Results:</h3>
+                <div id="results-count"></div>
+                <table id="results-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Interests</th>
+                            <th>Message</th>
+                            <th>Created At</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-body">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Supabase connection details
+        const SUPABASE_URL = 'https://xqmujsdspymsacjzhoyh.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhxbXVqc2RzcHltc2Fjanpob3loIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQzNTQ5NDUsImV4cCI6MjA1OTkzMDk0NX0.IspVcIDlUu5UDw1AnYhA5rV1erdQYBUa-irAO4wvtMM';
+        
+        // DOM elements
+        const debugInfo = document.getElementById('debug-info');
+        const errorContainer = document.getElementById('error-container');
+        const errorMessage = document.getElementById('error-message');
+        const loading = document.getElementById('loading');
+        const resultsContainer = document.getElementById('results-container');
+        const resultsCount = document.getElementById('results-count');
+        const resultsBody = document.getElementById('results-body');
+        
+        // Format date
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            try {
+                return new Date(dateString).toLocaleString();
+            } catch (error) {
+                console.error('Error formatting date:', error);
+                return 'Invalid date';
+            }
+        }
+        
+        // Show error
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorContainer.style.display = 'block';
+            loading.style.display = 'none';
+        }
+        
+        // Clear results
+        function clearResults() {
+            resultsBody.innerHTML = '';
+            resultsContainer.style.display = 'none';
+            errorContainer.style.display = 'none';
+        }
+        
+        // Display results
+        function displayResults(data) {
+            clearResults();
+            
+            if (!Array.isArray(data) || data.length === 0) {
+                showError('No data found or data is not in the expected format.');
+                return;
+            }
+            
+            resultsCount.textContent = `Found ${data.length} submissions.`;
+            
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${item.name || 'N/A'}</td>
+                    <td>${item.email || 'N/A'}</td>
+                    <td>${item.phone || 'N/A'}</td>
+                    <td>${item.interests || 'N/A'}</td>
+                    <td>${item.message || 'N/A'}</td>
+                    <td>${formatDate(item.created_at)}</td>
+                `;
+                
+                resultsBody.appendChild(row);
+            });
+            
+            resultsContainer.style.display = 'block';
+        }
+        
+        // Test direct fetch
+        document.getElementById('test-fetch').addEventListener('click', async () => {
+            clearResults();
+            loading.style.display = 'flex';
+            
+            try {
+                console.log('Testing direct fetch...');
+                debugInfo.innerHTML += '<p>Testing direct fetch...</p>';
+                
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/contact_submissions?select=*`, {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Direct fetch response:', data);
+                debugInfo.innerHTML += `<p>Direct fetch response received. Items: ${Array.isArray(data) ? data.length : 'Not an array'}</p>`;
+                
+                loading.style.display = 'none';
+                displayResults(data);
+                
+            } catch (error) {
+                console.error('Error in direct fetch:', error);
+                debugInfo.innerHTML += `<p>Error in direct fetch: ${error.message}</p>`;
+                showError(`Error in direct fetch: ${error.message}`);
+            }
+        });
+        
+        // Test fetch with auth
+        document.getElementById('test-fetch-auth').addEventListener('click', async () => {
+            clearResults();
+            loading.style.display = 'flex';
+            
+            try {
+                console.log('Testing fetch with auth...');
+                debugInfo.innerHTML += '<p>Testing fetch with auth...</p>';
+                
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/contact_submissions?select=*`, {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Fetch with auth response:', data);
+                debugInfo.innerHTML += `<p>Fetch with auth response received. Items: ${Array.isArray(data) ? data.length : 'Not an array'}</p>`;
+                
+                loading.style.display = 'none';
+                displayResults(data);
+                
+            } catch (error) {
+                console.error('Error in fetch with auth:', error);
+                debugInfo.innerHTML += `<p>Error in fetch with auth: ${error.message}</p>`;
+                showError(`Error in fetch with auth: ${error.message}`);
+            }
+        });
+        
+        // Clear results
+        document.getElementById('clear-results').addEventListener('click', () => {
+            clearResults();
+            debugInfo.innerHTML = '<h3>Debug Information:</h3><p>Click the buttons below to test different connection methods.</p>';
+        });
+    </script>
+</body>
+</html>
