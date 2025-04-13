@@ -7,8 +7,8 @@ import { Users, Heart, Award, Clock } from "lucide-react";
 const AboutUs = () => {
   useEffect(() => {
     // Set page title
-    document.title = "About Us - FitKraft Studio | Karve Nagar, Pune";
-    
+    document.title = "About Us - Fitkraft Studio";
+
     // Initialize intersection observer for scroll animations
     const observer = new IntersectionObserver(
       (entries) => {
@@ -41,7 +41,7 @@ const AboutUs = () => {
                 Your premier fitness destination in Karve Nagar, Pune
               </p>
             </div>
-            
+
             <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center mb-16">
               <div className="opacity-0 animate-fade-in animate-delay-200">
                 <h2 className="text-2xl font-bold text-foreground mb-4">Our Story</h2>
@@ -56,14 +56,14 @@ const AboutUs = () => {
                 </p>
               </div>
               <div className="glass-card overflow-hidden opacity-0 animate-fade-in animate-delay-300">
-                <img 
-                  src="https://images.unsplash.com/photo-1540497077202-7c8a3999166f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2670&q=80" 
-                  alt="FitKraft Studio" 
+                <img
+                  src="https://images.unsplash.com/photo-1540497077202-7c8a3999166f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2670&q=80"
+                  alt="FitKraft Studio"
                   className="w-full h-auto rounded-xl"
                 />
               </div>
             </div>
-            
+
             <div className="bg-secondary/30 rounded-xl p-6 md:p-8 mb-16 opacity-0 animate-fade-in animate-delay-400">
               <div className="grid md:grid-cols-2 gap-6 md:gap-12">
                 <div>
@@ -95,7 +95,7 @@ const AboutUs = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="text-center mb-12 opacity-0 animate-fade-in animate-delay-500">
               <h2 className="text-2xl font-bold text-foreground mb-6">Why Choose FitKraft Studio?</h2>
               <div className="grid md:grid-cols-3 gap-5">

@@ -19,7 +19,7 @@ const Contact = () => {
 
   useEffect(() => {
     // Set page title
-    document.title = "Contact Us - FitKraft Studio | Karve Nagar, Pune";
+    document.title = "Contact Us - Fitkraft Studio";
 
     // Initialize intersection observer for scroll animations
     const observer = new IntersectionObserver(

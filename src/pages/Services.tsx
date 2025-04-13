@@ -60,7 +60,7 @@ const ServiceCard = ({
 const Services = () => {
   useEffect(() => {
     // Set page title
-    document.title = "Our Services - FitKraft Studio | Karve Nagar, Pune";
+    document.title = "Our Services - Fitkraft Studio";
   }, []);
 
   const services = [

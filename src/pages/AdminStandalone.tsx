@@ -32,6 +32,11 @@ const AdminStandalone: React.FC = () => {
   const [isDataLoading, setIsDataLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Set page title
+  useEffect(() => {
+    document.title = "Admin - Fitkraft Studio";
+  }, []);
+
   // Check if user is already authenticated
   useEffect(() => {
     const adminAuthenticated = sessionStorage.getItem('adminAuthenticated');

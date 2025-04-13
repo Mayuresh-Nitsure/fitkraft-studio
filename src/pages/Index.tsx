@@ -32,7 +32,7 @@ const observeElements = () => {
 const Index = () => {
   useEffect(() => {
     // Set page title
-    document.title = "FitKraft Studio - Transform Your Fitness Journey";
+    document.title = "Fitkraft Studio";
 
     // Initialize intersection observer for scroll animations
     observeElements();
