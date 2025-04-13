@@ -37,7 +37,7 @@ const Hero = () => {
           {/* Left Column - Text Content */}
           <div className="flex flex-col justify-center order-1 mt-0 mb-6 md:mb-0 md:ml-24">
             <div className="flex mb-6 opacity-0 animate-fade-in">
-              <img src="/lovable-uploads/d2b4f7f0-95f2-46c7-b725-7cf9df54b0ac.png" alt="FitKraft Studio" className="h-14" />
+              <img src="/images/fitkraft-logo.png" alt="FitKraft Studio" className="h-14" />
             </div>
 
             <div className="inline-flex items-center rounded-full bg-secondary px-3 py-1 text-sm text-secondary-foreground mb-6 w-fit opacity-0 animate-fade-in">

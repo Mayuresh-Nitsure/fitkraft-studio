@@ -11,6 +11,29 @@
     <!-- Meta info (optional, you can update later) -->
     <meta name="description" content="Fitkraft Studio - Personal Fitness Training" />
     <meta name="author" content="Fitkraft Team" />
+
+    <!-- Force cache refresh -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <script>
+      // Force refresh if loaded from cache
+      window.onload = function() {
+        if (performance.navigation.type === 1) {
+          // This is a refresh, clear any cached data
+          localStorage.removeItem('lastVisit');
+        }
+
+        const lastVisit = localStorage.getItem('lastVisit');
+        const now = new Date().getTime();
+        localStorage.setItem('lastVisit', now);
+
+        // If last visit was more than 1 hour ago, force a hard refresh
+        if (lastVisit && (now - parseInt(lastVisit)) > 3600000) {
+          window.location.reload(true);
+        }
+      };
+    </script>
   </head>
 
   <body>

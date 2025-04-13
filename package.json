@@ -9,7 +9,8 @@
     "build:netlify": "node build-for-netlify.js",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postinstall": "echo 'Running postinstall script' && npm cache clean --force"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

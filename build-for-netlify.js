@@ -2,6 +2,11 @@ import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
+// Generate a timestamp for this build
+const buildTimestamp = new Date().toISOString();
+console.log(`Build started at: ${buildTimestamp}`);
+
+
 // Clean the dist directory if it exists
 if (fs.existsSync('dist')) {
   console.log('Cleaning dist directory...');
@@ -23,5 +28,28 @@ fs.writeFileSync('dist/_headers', `/*
   Pragma: no-cache
   Expires: 0
 `);
+
+// Create a build-info.json file with the timestamp
+console.log('Creating build-info.json file in dist directory...');
+const buildNumber = Date.now();
+fs.writeFileSync('dist/build-info.json', JSON.stringify({
+  buildTimestamp,
+  version: '1.0.0',
+  buildNumber,
+  openingHoursUpdated: true,
+  faviconFixed: true
+}, null, 2));
+
+// Update index.html to include version query parameters
+console.log('Updating index.html with version query parameters...');
+let indexHtml = fs.readFileSync('dist/index.html', 'utf8');
+indexHtml = indexHtml.replace(/(\/assets\/[^"']+)("|')/g, `$1?v=${buildNumber}$2`);
+fs.writeFileSync('dist/index.html', indexHtml);
+
+// Remove lovable-uploads directory from the build
+console.log('Removing lovable-uploads directory from the build...');
+if (fs.existsSync('dist/lovable-uploads')) {
+  fs.rmSync('dist/lovable-uploads', { recursive: true, force: true });
+}
 
 console.log('Build completed successfully!');

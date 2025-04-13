@@ -1,6 +1,32 @@
 [build]
   publish = "dist"
   command = "npm run build:netlify"
+  ignore = "false" # Always rebuild, never use cache
+
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_VERSION = "9"
+
+[build.processing]
+  skip_processing = false
+
+[build.processing.css]
+  bundle = false
+  minify = false
+
+[build.processing.js]
+  bundle = false
+  minify = false
+
+[build.processing.html]
+  pretty_urls = true
+
+[build.processing.images]
+  compress = false
+
+# Run a post-processing script
+[build.processing.html.transformers]
+  post_build = "node netlify-postbuild.js"
 
 [[redirects]]
   from = "/*"

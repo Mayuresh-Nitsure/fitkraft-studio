@@ -56,7 +56,7 @@ const Navbar = () => {
             <img
               alt="FitKraft Logo"
               className="h-6 md:h-8 w-auto mr-2"
-              src="/lovable-uploads/d2b4f7f0-95f2-46c7-b725-7cf9df54b0ac.png"
+              src="/images/fitkraft-logo.png"
             />
             FitKraft<span className="text-primary">.</span>studio
           </Link>
