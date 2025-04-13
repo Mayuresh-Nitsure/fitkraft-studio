@@ -18,61 +18,14 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
 
-    <!-- Additional meta tags to prevent caching -->
+    <!-- Additional meta tags -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="robots" content="noindex, nofollow" />
-    <meta name="googlebot" content="noindex, nofollow" />
-    <meta name="revisit-after" content="0 days" />
-    <meta name="generator" content="Fitkraft Studio" />
     <meta name="theme-color" content="#4a90e2" />
     <meta name="application-name" content="Fitkraft Studio" />
     <meta name="apple-mobile-web-app-title" content="Fitkraft Studio" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <script>
-      // Force refresh if loaded from cache
-      (function() {
-        // Clear all caches
-        if ('caches' in window) {
-          caches.keys().then(function(names) {
-            names.forEach(function(name) {
-              caches.delete(name);
-            });
-          });
-        }
-
-        // Clear localStorage
-        localStorage.clear();
-
-        // Clear sessionStorage
-        sessionStorage.clear();
-
-        // Delete all cookies
-        document.cookie.split(';').forEach(function(c) {
-          document.cookie = c.trim().split('=')[0] + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        });
-
-        // Set a random version parameter to force reload of assets
-        window.fitkraftVersion = Date.now();
-
-        // Force reload on page load
-        window.onload = function() {
-          // Set the correct title and description
-          document.title = 'Fitkraft Studio';
-
-          // Find and update meta description
-          const metaDescription = document.querySelector('meta[name="description"]');
-          if (metaDescription) {
-            metaDescription.setAttribute('content', 'FITKRAFT Personal Fitness Studio');
-          }
-
-          // Force reload if title is incorrect
-          if (document.title !== 'Fitkraft Studio') {
-            window.location.reload(true);
-          }
-        };
-      })();
-    </script>
+    <script src="/fix-title.js"></script>
   </head>
 
   <body>

@@ -46,34 +46,11 @@ let indexHtml = fs.readFileSync('dist/index.html', 'utf8');
 // Add version query parameters to assets
 indexHtml = indexHtml.replace(/(\/assets\/[^"']+)("|')/g, `$1?v=${buildNumber}$2`);
 
-// Ensure correct title - try multiple approaches
+// Ensure correct title
 indexHtml = indexHtml.replace(/<title>[^<]*<\/title>/, '<title>Fitkraft Studio</title>');
-indexHtml = indexHtml.replace(/fitkraft-landing-wizard/g, 'Fitkraft Studio');
-indexHtml = indexHtml.replace(/FitKraft Studio - Transform Your Fitness Journey/g, 'Fitkraft Studio');
-indexHtml = indexHtml.replace(/fitkraft - personal training/g, 'Fitkraft Studio');
 
-// Ensure correct meta description - try multiple approaches
+// Ensure correct meta description
 indexHtml = indexHtml.replace(/<meta name="description" content="[^"]*"/, '<meta name="description" content="FITKRAFT Personal Fitness Studio"');
-indexHtml = indexHtml.replace(/Fitkraft Studio - Personal Fitness Training/g, 'FITKRAFT Personal Fitness Studio');
-
-// Add a script to force the title and description
-const titleScript = `
-<script>
-  // Force correct title and description
-  document.addEventListener('DOMContentLoaded', function() {
-    document.title = 'Fitkraft Studio';
-
-    // Find and update meta description
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'FITKRAFT Personal Fitness Studio');
-    }
-  });
-</script>
-`;
-
-// Add the script right before the closing head tag
-indexHtml = indexHtml.replace('</head>', titleScript + '</head>');
 
 fs.writeFileSync('dist/index.html', indexHtml);
 

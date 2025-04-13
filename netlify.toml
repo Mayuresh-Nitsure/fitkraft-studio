@@ -29,6 +29,12 @@
   post_build = "node netlify-postbuild.js"
 
 [[redirects]]
+  from = "/custom"
+  to = "/custom-index.html"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
@@ -40,16 +46,13 @@
   status = 200
   force = true
 
+[[edge_functions]]
+  path = "/*"
+  function = "fix-title"
+
 [[headers]]
   for = "/*"
   [headers.values]
     Cache-Control = "no-cache, no-store, must-revalidate"
     Pragma = "no-cache"
     Expires = "0"
-    X-Frame-Options = "DENY"
-    X-XSS-Protection = "1; mode=block"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "no-referrer-when-downgrade"
-    Content-Security-Policy = "upgrade-insecure-requests"
-    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
-    Clear-Site-Data = "\"cache\", \"cookies\", \"storage\""
