@@ -52,4 +52,26 @@ if (fs.existsSync('dist/lovable-uploads')) {
   fs.rmSync('dist/lovable-uploads', { recursive: true, force: true });
 }
 
+// Search for any files with 'lovable' in the name and remove them
+console.log('Searching for and removing any lovable-related files...');
+function removeFilesWithLovable(dir) {
+  const files = fs.readdirSync(dir, { withFileTypes: true });
+
+  for (const file of files) {
+    const fullPath = path.join(dir, file.name);
+
+    if (file.isDirectory()) {
+      // Skip node_modules directory
+      if (file.name !== 'node_modules') {
+        removeFilesWithLovable(fullPath);
+      }
+    } else if (file.name.toLowerCase().includes('lovable') || file.name.toLowerCase().includes('loveable')) {
+      console.log(`Removing file: ${fullPath}`);
+      fs.unlinkSync(fullPath);
+    }
+  }
+}
+
+removeFilesWithLovable('dist');
+
 console.log('Build completed successfully!');
